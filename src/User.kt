@@ -70,4 +70,79 @@ class Admin(
         }
         println("All ticket prices updated by factor $factor.")
     }
+
+    fun addSpecialOffer(machine: TicketMachine, destinationName: String, discount: Double, startDate: LocalDate, endDate: LocalDate) {
+        val destination = machine.destinations.find { it.name.equals(destinationName, ignoreCase = true) }
+
+        if (destination == null) {
+            println("Destination '$destinationName' not found.")
+            return
+        }
+
+        if (discount <= 0 || discount >= 1) {
+            println("Discount must be between 0 and 1 (e.g., 0.20 for 20%).")
+            return
+        }
+
+        if (endDate.isBefore(startDate)) {
+            println("End date must be after start date.")
+            return
+        }
+
+        val offer = SpecialOffer(
+            id = machine.getNextOfferId(),
+            destination = destination,
+            discountPercentage = discount,
+            startDate = startDate,
+            endDate = endDate
+        )
+
+        machine.addSpecialOffer(offer)
+        println("Special offer added: ${(discount * 100).toInt()}% off for ${destination.name} from $startDate to $endDate")
+    }
+
+    fun viewSpecialOffers(machine: TicketMachine) {
+        println("\n--- All Special Offers ---")
+        if (machine.specialOffers.isEmpty()) {
+            println("No special offers found.")
+            return
+        }
+
+        machine.specialOffers.forEach { offer ->
+            val status = if (offer.isActive()) "ACTIVE" else "INACTIVE"
+            println(
+                "ID: ${offer.id} | ${offer.destination.name} | " +
+                        "${(offer.discountPercentage * 100).toInt()}% off | " +
+                        "${offer.startDate} to ${offer.endDate} | $status"
+            )
+        }
+    }
+
+    fun searchSpecialOffers(machine: TicketMachine, destinationName: String) {
+        println("\n--- Search Results for '$destinationName' ---")
+        val results = machine.searchSpecialOffers(destinationName)
+
+        if (results.isEmpty()) {
+            println("No special offers found for '$destinationName'.")
+            return
+        }
+
+        results.forEach { offer ->
+            val status = if (offer.isActive()) "ACTIVE" else "INACTIVE"
+            println(
+                "ID: ${offer.id} | ${offer.destination.name} | " +
+                        "${(offer.discountPercentage * 100).toInt()}% off | " +
+                        "${offer.startDate} to ${offer.endDate} | $status"
+            )
+        }
+    }
+
+    fun deleteSpecialOffer(machine: TicketMachine, offerId: Int) {
+        val removed = machine.removeSpecialOffer(offerId)
+        if (removed) {
+            println("Special offer ID $offerId deleted successfully.")
+        } else {
+            println("Special offer ID $offerId not found.")
+        }
+    }
 }
