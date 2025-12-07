@@ -4,9 +4,10 @@ data class SpecialOffer(
     val id: Int,
     val destination: Destination,
     val discountPercentage: Double, // e.g., 0.20 for 20% off
-    val startDate: LocalDate,
+    val startDate: LocalDate, // Format: 2024-12-01
     val endDate: LocalDate
 ) {
+
     fun isActive(date: LocalDate = LocalDate.now()): Boolean {
         return date in startDate..endDate
     }

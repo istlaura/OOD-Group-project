@@ -11,7 +11,8 @@ open class User(
 class Admin(
     id: Int,
     email: String,
-    fullName: String
+    fullName: String,
+    val pasword: String
 ) : User(id, email, fullName) {
     fun viewDestinations(machine: TicketMachine) {
         println("\n--- All Destinations ---")
@@ -71,7 +72,7 @@ class Admin(
         println("All ticket prices updated by factor $factor.")
     }
 
-    fun addSpecialOffer(machine: TicketMachine, destinationName: String, discount: Double, startDate: LocalDate, endDate: LocalDate) {
+    fun addSpecialOffer(machine: TicketMachine, destinationName: String, discount: Double, startDate: String, endDate: String) {
         val destination = machine.destinations.find { it.name.equals(destinationName, ignoreCase = true) }
 
         if (destination == null) {
